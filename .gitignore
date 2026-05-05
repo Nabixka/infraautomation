@@ -27,6 +27,14 @@ terraform/**
 !terraform/modules/database/**
 !terraform/modules/s3/
 !terraform/modules/s3/**
+!terraform/modules/ecr/
+!terraform/modules/ecr/**
+!terraform/modules/ecs/
+!terraform/modules/ecs/**
+!terraform/modules/peering/
+!terraform/modules/peering/**
+!terraform/modules/vpc_oregon/
+!terraform/modules/vpc_oregon/**
 
 # Answer key — jury only, do not push to student repo
 terraform/answer-key/

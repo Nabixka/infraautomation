@@ -69,3 +69,36 @@ variable "db_instance_class" {
   type    = string
   default = "db.t3.micro"
 }
+
+# ── VPC Oregon ──────────────────────────────────────────────────
+
+variable "oregon_vpc_name" {
+  type = string
+  default = "lks-vpc-monitoring"
+}
+
+variable "oregon_vpc_cidr" {
+  type = string
+  default = "10.1.0.0/16"
+}
+
+variable "oregon_subnet_cidr" {
+  type = list(string)
+  default = ["10.1.1.0/24", "10.1.2.0/24"]
+}
+
+variable "oregon_az" {
+  type = list(string)
+  default = ["us-west-2a", "us-west-2b"]
+}
+
+# 
+variable "ecr_name_oregon" {
+    type = string
+    default = "lks-ecr-application"
+}
+
+variable "ecr_name_virginia" {
+    type = string
+    default = "lks-ecr-monitoring"
+}

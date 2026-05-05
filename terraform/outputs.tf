@@ -19,6 +19,11 @@ output "isolated_subnet_ids" {
   value       = module.vpc.isolated_subnet_ids
 }
 
+output "isolated_route_table_id" {
+  description = "RTB Isolated"
+  value = module.vpc.isolated_route_table_id
+}
+
 # ── Security Groups ───────────────────────────────────────
 output "sg_alb_id" {
   description = "ALB Security Group ID"
@@ -82,4 +87,42 @@ output "tfstate_bucket_name" {
 output "assets_bucket_name" {
   description = "S3 assets bucket name"
   value       = module.s3.assets_bucket_name
+}
+
+# ── VPC Oregon ────────────────────────────────────────────────────
+output "vpc_oregon_id" {
+  description = "VPC Oregon Id"
+  value = module.oregon.vpc_oregon_id
+}
+
+output "vpc_oregon_subnet" {
+  description = "VPC Oregon Subnet"
+  value = module.oregon.vpc_oregon_subnet
+}
+
+output "vpc_oregon_rtb" {
+  description = "VPC Oregon RTB"
+  value = module.oregon.vpc_oregon_rtb
+}
+
+# ==========
+
+output "ecr_oregon_arn" {
+    description = "ECR Oregon ARN"
+    value = module.ecr.ecr_oregon_arn
+}
+
+output "ecr_virginia_arn" {
+    description = "ECR Virginia ARN"
+    value = module.ecr.ecr_virginia_arn
+}
+
+output "ecr_oregon_repo_url" {
+    description = "ECR Oregon URL"
+    value = module.ecr.ecr_oregon_repo_url
+}
+
+output "ecr_virginia_repo_url" {
+    description = "ECR Virginia URL"
+    value = module.ecr.ecr_virginia_repo_url
 }

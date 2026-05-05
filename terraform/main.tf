@@ -20,6 +20,19 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  alias = "oregon"
+  region = "us-west-2"
+
+  default_tags {
+    tags = {
+      Project     = "lks2026"
+      Environment = "production"
+      ManagedBy   = "Terraform"
+    }
+  }
+}
+
 # ── 1. Application VPC — us-east-1 ───────────────────────
 module "vpc" {
   source = "./modules/vpc"
@@ -75,4 +88,40 @@ module "s3" {
 
   tfstate_bucket_name = "lks-tfstate-${var.student_name}-${substr(var.aws_account_id, -8, -1)}"
   assets_bucket_name  = "lks-app-assets-${var.student_name}-2026"
+}
+
+# ── 6. VPC — us-west-2 ────────────────────────────
+
+module "oregon" {
+  source = "./modules/vpc_oregon"
+
+  providers = {
+    aws = aws.oregon
+  }
+  vpc_name = var.oregon_vpc_name
+  vpc_cidr = var.oregon_vpc_cidr
+  isolated_subnet_cidrs = var.oregon_subnet_cidr
+  availability_zones = var.oregon_az
+}
+
+# Peering
+
+module "peering" {
+  source = "./modules/peering"
+
+  vpc_accepter = module.oregon.vpc_oregon_id
+  vpc_requester = module.vpc.vpc_id
+  peer_owner_id = var.aws_account_id
+  rtb_virginia = module.vpc.isolated_route_table_id
+  rtb_oregon =  module.oregon.vpc_oregon_rtb
+  cidr_oregon = var.oregon_vpc_cidr
+  cidr_virginia = var.vpc_cidr
+}
+
+# ECR
+module "ecr" {
+  source = "./modules/ecr"
+
+  ecr_name_virginia = var.ecr_name_virginia
+  ecr_name_oregon = var.ecr_name_oregon
 }
