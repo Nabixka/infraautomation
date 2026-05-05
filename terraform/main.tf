@@ -125,3 +125,9 @@ module "ecr" {
   ecr_name_virginia = var.ecr_name_virginia
   ecr_name_oregon = var.ecr_name_oregon
 }
+
+module "ecs" {
+  source = "./modules/ecs"
+
+  iam = var.iam
+}

@@ -95,10 +95,15 @@ variable "oregon_az" {
 # 
 variable "ecr_name_oregon" {
     type = string
-    default = "lks-ecr-application"
+    default = "lks-ecr-monitoring"
 }
 
 variable "ecr_name_virginia" {
     type = string
-    default = "lks-ecr-monitoring"
+    default = "lks"
+}
+
+variable "iam" {
+  type = string
+  default = "arn:aws:iam::339712797974:role/LabRole"
 }

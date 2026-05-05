@@ -106,23 +106,32 @@ output "vpc_oregon_rtb" {
 }
 
 # ==========
-
-output "ecr_oregon_arn" {
-    description = "ECR Oregon ARN"
-    value = module.ecr.ecr_oregon_arn
-}
-
-output "ecr_virginia_arn" {
+output "fe_arn" {
     description = "ECR Virginia ARN"
-    value = module.ecr.ecr_virginia_arn
+    value = module.ecr.fe_arn
 }
 
-output "ecr_oregon_repo_url" {
+output "fe_url" {
     description = "ECR Oregon URL"
-    value = module.ecr.ecr_oregon_repo_url
+    value = module.ecr.fe_url
 }
 
-output "ecr_virginia_repo_url" {
-    description = "ECR Virginia URL"
-    value = module.ecr.ecr_virginia_repo_url
+output "api_arn" {
+    description = "ECR Virginia ARN"
+    value = module.ecr.api_arn
+}
+
+output "api_url" {
+    description = "ECR Oregon URL"
+    value = module.ecr.api_url
+}
+
+output "analytics_arn" {
+    description = "ECR Virginia ARN"
+    value = module.ecr.analytics_arn
+}
+
+output "analytics_url" {
+    description = "ECR Oregon URL"
+    value = module.ecr.analytics_url
 }

@@ -8,11 +8,23 @@ provider "aws" {
     region = "us-west-2"
 }
 
-resource "aws_ecr_repository" "virginia" {
-  provider = aws.virginia
-  name                 = var.ecr_name_virginia
-  image_tag_mutability = "MUTABLE"
 
+resource "aws_ecr_repository" "fe" {
+  provider = aws.virginia
+  name                 = "${var.ecr_name_virginia}-fe-app"
+  image_tag_mutability = "MUTABLE"
+}
+
+resource "aws_ecr_repository" "api" {
+  provider = aws.virginia
+  name                 = "${var.ecr_name_virginia}-api-app"
+  image_tag_mutability = "MUTABLE"
+}
+
+resource "aws_ecr_repository" "analytics" {
+  provider = aws.virginia
+  name                 = "${var.ecr_name_virginia}-analytics-app"
+  image_tag_mutability = "MUTABLE"
 }
 
 resource "aws_ecr_repository" "oregon" {
