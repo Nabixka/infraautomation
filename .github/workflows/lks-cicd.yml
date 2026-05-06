@@ -81,6 +81,14 @@ jobs:
           docker push "$IMG:$IMAGE_TAG" && docker push "$IMG:latest"
           echo "Pushed API: $IMG:$IMAGE_TAG"
 
+      - name: Build & push — Analystics
+        env: { IMAGE_TAG: "${{ github.sha }}" }
+        run: |
+          IMG="$ECR_REGISTRY/lks-analytics-app"
+          docker build -t "$IMG:$IMAGE_TAG" -t "$IMG:latest" ./analytics
+          docker push "$IMG:$IMAGE_TAG" && docker push "$IMG:latest"
+          echo "Pushed ANA: $IMG:$IMAGE_TAG"
+
       - name: Save image tag
         run: echo "${{ github.sha }}" > /tmp/image-tag.txt
 
