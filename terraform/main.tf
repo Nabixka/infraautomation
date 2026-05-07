@@ -130,4 +130,7 @@ module "ecs" {
   source = "./modules/ecs"
 
   iam = var.iam
+  analytics_family = var.analytics_family
+  fe_family = var.fe_family
+  api_family = var.api_family
 }

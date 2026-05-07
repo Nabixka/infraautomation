@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import Response
 import time
+import uvicorn
 
 load_dotenv()
 
@@ -147,5 +148,4 @@ async def user_stats():
 
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", 5000)), reload=False)
+    uvicorn.run("run:app", host="0.0.0.0", port=int(os.getenv("PORT", 5000)), reload=False)

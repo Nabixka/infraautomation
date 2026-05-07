@@ -103,7 +103,23 @@ variable "ecr_name_virginia" {
     default = "lks"
 }
 
+# ECS 
 variable "iam" {
   type = string
   default = "arn:aws:iam::339712797974:role/LabRole"
+}
+
+variable "analytics_family" {
+  type = string
+  default = "lks-analytics-app"
+}
+
+variable "fe_family" {
+  type = string
+  default = "lks-fe-app"
+}
+
+variable "api_family" {
+  type = string
+  default = "lks-api-app"
 }

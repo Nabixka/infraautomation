@@ -1,5 +1,16 @@
 variable "iam" {
   type        = string
-  default     = "IAM"
   description = "description"
+}
+
+variable "analytics_family" {
+  type = string
+}
+
+variable "fe_family" {
+  type = string
+}
+
+variable "api_family" {
+  type = string
 }
