@@ -38,35 +38,74 @@ resource "aws_ecs_task_definition" "api-tf" {
   container_definitions = <<TASK_DEFINITION
 [
   {
-    "name": "lks-fe-container",
-        "image": "339712797974.dkr.ecr.us-east-1.amazonaws.com/lks-api-app:2bf19b59530de3434d8bd93d9ec46540f42cc626",
-            "cpu": 0,
-            "portMappings": [
-                {
-                    "containerPort": 8080,
-                    "hostPort": 8080,
-                    "protocol": "tcp",
-                    "name": "lks-api-container-8080-tcp",
-                    "appProtocol": "http"
-                }
-            ],
-            "essential": true,
-            "environment": [],
-            "environmentFiles": [],
-            "mountPoints": [],
-            "volumesFrom": [],
-            "ulimits": [],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-group": "/ecs/lks-api-service",
-                    "awslogs-create-group": "true",
-                    "awslogs-region": "us-east-1",
-                    "awslogs-stream-prefix": "ecs"
-                },
-                "secretOptions": []
-            },
-            "systemControls": []
+      "name": "lks-fe-container",
+      "image": "339712797974.dkr.ecr.us-east-1.amazonaws.com/lks-api-app:2bf19b59530de3434d8bd93d9ec46540f42cc626",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "name": "lks-api-container-8080-tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "SQS_QUEUE_URL",
+          "value": "https://sqs.us-east-1.amazonaws.com/339712797974/lks-event-queue"
+        },
+        {
+          "name": "AWS_REGION",
+          "value": "us-east-1"
+        },
+        {
+          "name": "PORT",
+          "value": "8080"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "5432"
+        },
+        {
+          "name": "DB_USER",
+          "value": "lksadmin"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "lksdb"
+        },
+        {
+          "name": "CORS_ORIGIN",
+          "value": "*"
+        }
+      ],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "secrets": [
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:ssm:us-east-1:339712797974:parameter/lks/app/db_password"
+        },
+        {
+          "name": "DB_HOST",
+          "valueFrom": "arn:aws:ssm:us-east-1:339712797974:parameter/lks/app/db_host"
+        }
+      ],
+      "ulimits": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/lks-api-service",
+          "awslogs-create-group": "true",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      },
+      "systemControls": []
   }
 ]
 TASK_DEFINITION
@@ -92,7 +131,7 @@ resource "aws_ecs_task_definition" "fe-tf" {
 [
   {
     "name": "lks-fe-container",
-        "image": "339712797974.dkr.ecr.us-east-1.amazonaws.com/lks-api-app:latest",
+        "image": "339712797974.dkr.ecr.us-east-1.amazonaws.com/lks-fe-app:latest",
             "cpu": 0,
             "portMappings": [
                 {
@@ -104,7 +143,12 @@ resource "aws_ecs_task_definition" "fe-tf" {
                 }
             ],
             "essential": true,
-            "environment": [],
+            "environment": [
+            {
+              "name":"VITE_API_URL",
+              "value":"http://lks-alb-1071445083.us-east-1.elb.amazonaws.com"
+            }
+            ],
             "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
@@ -157,7 +201,42 @@ resource "aws_ecs_task_definition" "analytics-tf" {
                 }
             ],
             "essential": true,
-            "environment": [],
+            "environment": [
+            {
+              "name": "AWS_REGION",
+              "value": "us-east-1"
+            },
+            {
+              "name": "PORT",
+              "value": "5000"
+            },
+            {
+              "name": "DB_PORT",
+              "value": "5432"
+            },
+            {
+              "name": "DB_USER",
+              "value": "lksadmin"
+            },
+            {
+              "name": "DB_NAME",
+              "value": "lksdb"
+            },
+            {
+              "name":"PROMETHEUS_URL",
+              "value":""
+            }
+            ],
+            "secrets": [
+            {
+              "name": "DB_PASSWORD",
+              "valueFrom": "arn:aws:ssm:us-east-1:339712797974:parameter/lks/app/db_password"
+            },
+            {
+              "name": "DB_HOST",
+              "valueFrom": "arn:aws:ssm:us-east-1:339712797974:parameter/lks/app/db_host"
+            }
+            ]
             "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
