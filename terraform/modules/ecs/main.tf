@@ -29,7 +29,7 @@ provider "aws" {
 resource "aws_ecs_task_definition" "api-tf" {
   provider = aws.virginia
   family                = var.api_family
-  requires_compatibilities = ["EC2"]
+  requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu = "1024"
   execution_role_arn = var.iam
@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "api-tf" {
 [
   {
       "name": "lks-fe-container",
-      "image": "339712797974.dkr.ecr.us-east-1.amazonaws.com/lks-api-app:2bf19b59530de3434d8bd93d9ec46540f42cc626",
+      "image": "339712797974.dkr.ecr.us-east-1.amazonaws.com/lks-api-app:latest",
       "cpu": 0,
       "portMappings": [
         {
@@ -121,7 +121,7 @@ resource "aws_ecs_cluster" "api" {
 resource "aws_ecs_task_definition" "fe-tf" {
   provider = aws.virginia
   family                = var.fe_family
-  requires_compatibilities = ["EC2"]
+  requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu = "1024"
   memory = "3072"
@@ -179,7 +179,7 @@ resource "aws_ecs_cluster" "fe" {
 resource "aws_ecs_task_definition" "analytics-tf" {
   provider = aws.virginia
   family                = var.analytics_family
-  requires_compatibilities = ["EC2"]
+  requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu = "1024"
   memory = "3072"
@@ -236,7 +236,7 @@ resource "aws_ecs_task_definition" "analytics-tf" {
               "name": "DB_HOST",
               "valueFrom": "arn:aws:ssm:us-east-1:339712797974:parameter/lks/app/db_host"
             }
-            ]
+            ],
             "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
