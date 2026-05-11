@@ -13,3 +13,7 @@ output "tg_fe_arn" {
 output "tg_api_arn" {
   value = aws_lb_target_group.api.arn
 }
+
+output "tg_analystics_arn" {
+  value       = aws_lb_target_group.analystics.arn
+}

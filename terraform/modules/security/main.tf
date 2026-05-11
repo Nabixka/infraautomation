@@ -7,7 +7,34 @@ terraform {
   }
 }
 
+provider "aws" {
+  region = "us-east-1"
+  alias = "virginia"
+
+  default_tags {
+    tags = {
+      Project     = "lks2026"
+      Environment = "production"
+      ManagedBy   = "Terraform"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-west-2"
+  alias = "oregon"
+
+  default_tags {
+    tags = {
+      Project     = "lks2026"
+      Environment = "production"
+      ManagedBy   = "Terraform"
+    }
+  }
+}
+
 resource "aws_security_group" "alb" {
+  provider    = aws.virginia
   name        = "lks-sg-alb"
   description = "ALB allow HTTP from internet"
   vpc_id      = var.vpc_id
@@ -26,12 +53,20 @@ resource "aws_security_group" "alb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   lifecycle {
     ignore_changes = [ingress, egress]
   }
 }
 
 resource "aws_security_group" "ecs" {
+  provider    = aws.virginia
   name        = "lks-sg-ecs"
   description = "ECS tasks - app traffic and Prometheus metrics"
   vpc_id      = var.vpc_id
@@ -74,16 +109,24 @@ resource "aws_security_group" "ecs" {
 }
 
 resource "aws_security_group" "db" {
+  provider    = aws.virginia
   name        = "lks-sg-db"
   description = "Database allow access from ECS only"
   vpc_id      = var.vpc_id
   tags        = { Name = "lks-sg-db" }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ecs.id]
+  }
+
+  ingress {
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ecs.id]
   }
 
   lifecycle {
@@ -92,9 +135,10 @@ resource "aws_security_group" "db" {
 }
 
 resource "aws_security_group" "monitoring" {
+  provider    = aws.oregon
   name        = "lks-sg-monitoring"
   description = "Monitoring stack internal"
-  vpc_id      = var.vpc_id
+  vpc_id      = var.vpc_oregon_id
   tags        = { Name = "lks-sg-monitoring" }
 
   ingress {
@@ -103,6 +147,28 @@ resource "aws_security_group" "monitoring" {
     protocol    = "tcp"
     cidr_blocks = [var.monitoring_vpc_cidr]
   }
+
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  ingress {
+    from_port   = 3100
+    to_port     = 3100
+    protocol    = "tcp"
+    cidr_blocks = [var.monitoring_vpc_cidr]
+  }
+
+  ingress {
+    from_port   = 9093
+    to_port     = 9093
+    protocol    = "tcp"
+    cidr_blocks = [var.monitoring_vpc_cidr]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0

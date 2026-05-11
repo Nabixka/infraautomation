@@ -61,6 +61,11 @@ output "tg_api_arn" {
   value       = module.alb.tg_api_arn
 }
 
+output "tg_analystics_arn" {
+  description = "Analytics Target Group ARN - paste into ECS Analytics Service Console"
+  value       = module.alb.tg_analystics_arn
+}
+
 # ── Database ─────────────────────────────────────────────
 output "rds_endpoint" {
   description = "RDS PostgreSQL endpoint - also stored in SSM /lks/app/db_host"

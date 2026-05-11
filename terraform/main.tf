@@ -51,6 +51,7 @@ module "security" {
 
   vpc_id              = module.vpc.vpc_id
   monitoring_vpc_cidr = var.monitoring_vpc_cidr
+  vpc_oregon_id       = module.oregon.vpc_oregon_id
 }
 
 # ── 3. Application Load Balancer — us-east-1 ─────────────

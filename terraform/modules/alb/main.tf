@@ -27,11 +27,11 @@ resource "aws_lb_target_group" "fe" {
   port        = 3000
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
-  target_type = "instance"
+  target_type = "ip"
 
   health_check {
     path                = "/health"
-    interval            = 10
+    interval            = 30
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 3
@@ -53,7 +53,29 @@ resource "aws_lb_target_group" "api" {
 
   health_check {
     path                = "/api/health"
-    interval            = 10
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+    matcher             = "200"
+  }
+  tags = { Name = "lks-tg-api" }
+
+  lifecycle {
+    ignore_changes = all
+  }
+}
+
+resource "aws_lb_target_group" "analystics" {
+  name        = "lks-tg-analystics"
+  port        = 5000
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  health_check {
+    path                = "/api/stats/health"
+    interval            = 30
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 3
@@ -73,7 +95,7 @@ resource "aws_lb_listener" "http" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.api.arn
+    target_group_arn = aws_lb_target_group.fe.arn
   }
 
   lifecycle {
@@ -81,13 +103,31 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-resource "aws_lb_listener_rule" "api" {
+resource "aws_lb_listener_rule" "analystics" {
   listener_arn = aws_lb_listener.http.arn
-  priority     = 1
+  priority     = 10
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.fe.arn
+    target_group_arn = aws_lb_target_group.analystics.arn
+  }
+  condition {
+    path_pattern { values = ["/api/stats/*"] }
+  }
+
+  lifecycle {
+    ignore_changes = all
+  }
+}
+
+
+resource "aws_lb_listener_rule" "api" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 20
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.api.arn
   }
   condition {
     path_pattern { values = ["/api/*"] }
