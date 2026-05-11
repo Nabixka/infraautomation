@@ -148,4 +148,4 @@ async def user_stats():
 
 
 if __name__ == "__main__":
-    uvicorn.run("run:app", host="0.0.0.0", port=int(os.getenv("PORT", 5000)), reload=False)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 5000)), reload=False)
